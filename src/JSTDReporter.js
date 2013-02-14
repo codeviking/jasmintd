@@ -4,7 +4,7 @@ var jasmintd = jasmintd || {};
 
     var reLineEnd           = /\n+/,
         reTrailingPeriod    = /[.]+$/,
-        reJasmine           = /\/jasmine[\.\-]/,
+        reJasmine           = /\/jasmintd/,
         reTestUrl           = /https?:\/\/\w+(:\d+)?\/test\//,
         /**
          * @enum
@@ -82,11 +82,13 @@ var jasmintd = jasmintd || {};
             item = items[i];
             if(item instanceof jasmine.MessageResult) {
                 logMessages.push(setColor(item.toString(), Colors.YELLOW));
-            } else {
+            } else if(!item.passed()) {
                 messages.push(
                     {
-                        message : item.toString(),
-                        name    : item.trace.name,
+                        // The message or name doesn't end up being formatted all that well by JSTD, especially if there's multiple.
+                        // So we just let the stack do the work for us...
+                        message : '',
+                        name    : '',
                         stack   : this.formatErrorStack(item.trace.stack)
                     }
                 );
