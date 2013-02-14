@@ -67,7 +67,11 @@ module.exports = function(grunt) {
             dir + 'requirejs.LICENSE'
         );
         grunt.log.writeln('Copied src/etc/requirejs/LICENSE -> ' + dir + 'requirejs.LICENSE');
-
+        grunt.file.copy(
+            'LICENSE',
+            dir + 'jasmintd.LICENSE'
+        );
+        grunt.log.writeln('Copied LICENSE -> ' + dir + 'jasmintd.LICENSE');
     });
     grunt.registerTask('build', 'concat min licenses compress');
 };
