@@ -33,15 +33,29 @@ module.exports = function(grunt) {
         min : {
             dist : {
                 src     : [ '<banner>', 'build/jasmintd.js' ],
-                dest    : 'dist/<%= pkg.version %>/<%= pkg.name %>.<%= pkg.version %>.js'
+                dest    : 'build/jasmintd/jasmintd.js'
             }
         },
-        finalize : {
-            dest : 'dist/<%= pkg.version %>/'
+        licenses : {
+            dest : 'build/jasmintd/',
+        },
+        compress : {
+            main : {
+                options : {
+                    mode    : 'tgz'
+                },
+                files : [
+                    {
+                        src     : [ 'build/jasmintd/*' ],
+                        dest    : 'dist/<%= pkg.name %>-<%= pkg.version %>.tar.gz'
+                    }
+                ]
+            }
         }
     });
+    grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.registerTask('default', 'lint');
-    grunt.registerMultiTask('finalize', 'finalize the distributed package', function() {
+    grunt.registerMultiTask('licenses', 'copy over required licenses', function() {
         var dir = grunt.template.process(this.data);
         grunt.file.copy(
             'src/etc/jasmine/MIT.LICENSE',
@@ -53,6 +67,7 @@ module.exports = function(grunt) {
             dir + 'requirejs.LICENSE'
         );
         grunt.log.writeln('Copied src/etc/requirejs/LICENSE -> ' + dir + 'requirejs.LICENSE');
+
     });
-    grunt.registerTask('build', 'concat min finalize');
+    grunt.registerTask('build', 'concat min licenses compress');
 };
