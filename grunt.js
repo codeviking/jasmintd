@@ -20,11 +20,12 @@ module.exports = function(grunt) {
                 src : [
                     'src/etc/jasmine/jasmine.js',
                     'src/etc/requirejs/require.js',
-                    'src/Block.js',
                     'src/Function.js',
+                    'src/Block.js',
+                    'src/SuiteRequirements.js',
+                    'src/Suite.js',
                     'src/JSTDReporter.js',
-                    'Suite.js',
-                    'SuiteRequirements'
+                    'src/adapter.js'
                 ],
                 dest : 'build/jasmintd.js'
             }
@@ -32,10 +33,26 @@ module.exports = function(grunt) {
         min : {
             dist : {
                 src     : [ '<banner>', 'build/jasmintd.js' ],
-                dest    : 'dist/<%= pkg.name %>.<%= pkg.version %>.js'
+                dest    : 'dist/<%= pkg.version %>/<%= pkg.name %>.<%= pkg.version %>.js'
             }
+        },
+        finalize : {
+            dest : 'dist/<%= pkg.version %>/'
         }
     });
     grunt.registerTask('default', 'lint');
-    grunt.registerTask('build', 'concat min');
+    grunt.registerMultiTask('finalize', 'finalize the distributed package', function() {
+        var dir = grunt.template.process(this.data);
+        grunt.file.copy(
+            'src/etc/jasmine/MIT.LICENSE',
+            dir + 'jasmine.MIT.LICENSE'
+        );
+        grunt.log.writeln('Copied src/etc/jasmine/MIT.LICENSE -> ' + dir + 'jasmine.MIT.LICENSE');
+        grunt.file.copy(
+            'src/etc/requirejs/LICENSE',
+            dir + 'requirejs.LICENSE'
+        );
+        grunt.log.writeln('Copied src/etc/requirejs/LICENSE -> ' + dir + 'requirejs.LICENSE');
+    });
+    grunt.registerTask('build', 'concat min finalize');
 };
