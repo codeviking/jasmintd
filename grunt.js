@@ -39,6 +39,9 @@ module.exports = function(grunt) {
         licenses : {
             dest : 'build/jasmintd/',
         },
+        dist : {
+            dest : 'dist/<%= pkg.version %>'
+        },
         compress : {
             main : {
                 options : {
@@ -46,15 +49,20 @@ module.exports = function(grunt) {
                 },
                 files : [
                     {
-                        src     : [ 'build/jasmintd/*' ],
-                        dest    : 'dist/<%= pkg.name %>-<%= pkg.version %>.tar.gz'
+                        src     : [ 'dist/<%= pkg.version %>/*' ],
+                        dest    : 'archive/<%= pkg.name %>-<%= pkg.version %>.tar.gz'
                     }
                 ]
             }
         }
     });
+
     grunt.loadNpmTasks('grunt-contrib-compress');
+
+    // By default, simply lint
     grunt.registerTask('default', 'lint');
+
+    // Copy over licenses into the build
     grunt.registerMultiTask('licenses', 'copy over required licenses', function() {
         var dir = grunt.template.process(this.data);
         grunt.file.copy(
@@ -73,5 +81,26 @@ module.exports = function(grunt) {
         );
         grunt.log.writeln('Copied LICENSE -> ' + dir + 'jasmintd.LICENSE');
     });
-    grunt.registerTask('build', 'concat min licenses compress');
+
+    grunt.registerMultiTask('dist', 'distribute a build', function() {
+        var dir = grunt.template.process(this.data);
+        grunt.file.recurse(
+            'build/jasmintd',
+            function(abspath, rootdir, subdir, filename) {
+                var newFile = dir + '/' + filename;
+                grunt.file.copy(
+                    abspath,
+                    newFile
+                );
+                grunt.log.writeln('Copied ' + abspath + ' -> ' + newFile);
+            }
+        )
+        grunt.log.ok(grunt.template.process('Published <%= pkg.name %> v<%= pkg.version %>'));
+    });
+
+    grunt.registerTask('build', 'concat min licenses');
+
+    grunt.registerTask('publish', 'concat min licenses dist');
+
+    grunt.registerTask('archive', 'publish compress')
 };
