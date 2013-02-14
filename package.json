@@ -1,0 +1,12 @@
+{
+    "name"          : "jasmintd",
+    "version"       : "1.0.0",
+    "author"        : "Sam Skjonsberg <sskjonsberg@opencar.com>",
+    "description"   : "An adapter for running Jasmine based unit tests using RequireJS within JSTD.",
+    "license"       : "MIT",
+    "keywords"      : [ "jasmine", "JSTD", "requirejs" ],
+    "repository"    : {
+        "type"  : "git",
+        "url"   : "https://github.com/codeviking/jasmintd.git"
+    }
+}
